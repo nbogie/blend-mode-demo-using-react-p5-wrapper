@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import './App.css';
+import './BlendModeDemo.css';
 import { P5Instance, ReactP5Wrapper } from "react-p5-wrapper";
-import { count } from 'console';
-import { blendModeDemoSketch } from './BlendModeDemoSketch';
+
+import { blendModeDemoSketch2 } from './BlendModeDemoSketch';
 
 
 export function BlendModeDemo() {
@@ -10,8 +10,8 @@ export function BlendModeDemo() {
 
   return <div>
     <div className="big">{counter}</div>
-    <button onClick={() => { setCounter(p => p + 1) }}>Plus</button>
-    <ReactP5Wrapper counter={counter} sketch={blendModeDemoSketch} />
+    <button onClick={() => { setCounter(p => p + 10) }}>Plus</button>
+    <ReactP5Wrapper counter={counter} sketch={blendModeDemoSketch2} />
   </div>
 }
 
