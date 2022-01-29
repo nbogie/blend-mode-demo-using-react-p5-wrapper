@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React from 'react';
 import './App.css';
 import BlendModeDemo from './BlendModeDemo/BlendModeDemo';
-import SimpleDemo from './SimpleDemo';
+// import SimpleDemo from './SimpleDemo';
 
 export function App() {
-  return <div>
+  return <>
     <BlendModeDemo />
-  </div>
+  </>
 
 }
 

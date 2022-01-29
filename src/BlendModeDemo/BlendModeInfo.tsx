@@ -1,4 +1,3 @@
-
 export interface BlendModeInfo {
     mode: string;
     shortcut: string;
@@ -7,6 +6,13 @@ export interface BlendModeInfo {
     skip?: boolean;
 }
 
+export function suggestedStartingBlendMode(): BlendModeInfo {
+    const found = createBlendModeInfos().find(bmi => bmi.mode === "multiply");
+    if (!found) {
+        throw new Error("can't find suggested blend mode");
+    }
+    return found;
+}
 export function createBlendModeInfos(): BlendModeInfo[] {
     const raws: [string, string, string, string, boolean?][] = [
         [
