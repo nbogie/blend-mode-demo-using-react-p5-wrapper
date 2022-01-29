@@ -1,7 +1,8 @@
 import { P5Instance } from "react-p5-wrapper";
+import { BlendModeInfo, createBlendModeInfos } from "./BlendModeInfo";
+import ORIGINAL_P5 from 'p5';
 
-
-export function blendModeDemoSketch2(p5: P5Instance) {
+export function blendModeDemoSketch(p5: P5Instance) {
 
   let chosenBlendMode: BlendModeInfo;
   let previousBlendMode: BlendModeInfo;
@@ -16,25 +17,20 @@ export function blendModeDemoSketch2(p5: P5Instance) {
   let shapeOptions: ShapeOptions;
 
 
-
-
   p5.updateWithProps = props => {
     // if (props.counter) {
     //   counter = props.counter;
     // }
   };
 
-
   p5.preload = () => {
     myFont = p5.loadFont("/fonts/Roboto-Medium.ttf");
   }
 
   p5.setup = () => {
-    console.log('setup')
-    p5.createCanvas(600, 400);
-
-
-    p5.createCanvas(p5.windowWidth, p5.windowHeight);
+    console.log('SETUP')
+    const canvas = p5.createCanvas(p5.windowWidth, p5.windowHeight);
+    canvas.mousePressed(myMousePressed);
     p5.background(100);
     shapeOptions = {
       roundedCorners: p5.random([true, false]),
@@ -53,50 +49,37 @@ export function blendModeDemoSketch2(p5: P5Instance) {
     drawAllTextOverlays();
   };
 
-
-  interface BlendModeInfo {
-    mode: string;
-    shortcut: string;
-    name: string;
-    description: string;
-    skip?: boolean;
-  }
-  function createBlendModeInfos(): BlendModeInfo[] {
-    const raws: [string, string, string, string, boolean?][] = [
-      [p5.SOFT_LIGHT, "1", "SOFT_LIGHT", "Mix of DARKEST and LIGHTEST.  Works like OVERLAY, but not as harsh."],
-      [p5.HARD_LIGHT, "2", "HARD_LIGHT", "SCREEN when greater than 50% gray, MULTIPLY when lower."],
-      [p5.BLEND, "3", "BLEND", "Default.  Linear interpolation of colours (default)"],
-      [p5.MULTIPLY, "4", "MULTIPLY", "Multiply the colors, result will always be darker."],
-
-      [p5.SCREEN, "5", "SCREEN", "Opposite multiply, uses inverse values of the colors."],
-      [p5.BURN, "6", "BURN", "Darker areas are applied, increasing contrast, ignores lights."],
-      [p5.DODGE, "7", "DODGE", "Lightens light tones and increases contrast, ignores darks."],
-      [p5.OVERLAY, "8", "OVERLAY", "Mix of MULTIPLY and SCREEN.  Multiplies dark values, and screens light values."],
-
-      [p5.ADD, "9", "ADD", "Sum of A and B"],
-      [p5.DARKEST, "0", "DARKEST", "Only the darkest colour succeeds"],
-      [p5.LIGHTEST, "-", "LIGHTEST", "Only the lightest colour succeeds"],
-      [p5.DIFFERENCE, "=", "DIFFERENCE", "Subtract colors from underlying image."],
-      [p5.EXCLUSION, "q", "EXCLUSION", "Similar to DIFFERENCE, but less extreme.", true],
-      [p5.REPLACE, "w", "REPLACE", "The pixels entirely replace the others and don't utilize alpha (transparency) values.", true],
-      [p5.REMOVE, "e", "REMOVE", "Removes pixels from B with the alpha strength of A.", true],
-    ];
-
-    return raws.map(([mode, shortcut, name, description, skip]) => {
-      return {
-        mode,
-        shortcut,
-        name,
-        description,
-        skip
-      };
-    });
-
-  }
-  p5.mousePressed = () => {
+  function myMousePressed() {
+    console.log('mousePressed')
     p5.background(100);
     randomiseTheBlendMode();
   }
+
+  //We *might* prefer to say canvas.keyPressed(callback) to only catch key events when canvas in focus.
+  p5.keyPressed = () => {
+    if (p5.key === 'b') {
+      shapeOptions.isGrayscale = !shapeOptions.isGrayscale;
+      wipe();
+    }
+    if (p5.key === 'r') {
+      shapeOptions.roundedCorners = !shapeOptions.roundedCorners;
+    }
+    if (p5.key === 'c') {
+      wipe();
+    }
+    if (p5.key === ' ') {
+      p5.noLoop();
+    }
+    const found = blendModeInfos.find(info => p5.key === info.shortcut);
+    if (found) {
+      previousBlendMode = chosenBlendMode;
+      console.log('storing previous blend mode: ', previousBlendMode)
+      chosenBlendMode = found;
+      //@ts-ignore
+      p5.blendMode(chosenBlendMode.mode);
+    }
+  }
+
   function wipe() {
     p5.push();
     p5.blendMode(p5.BLEND);
@@ -106,8 +89,7 @@ export function blendModeDemoSketch2(p5: P5Instance) {
   function randomiseTheBlendMode() {
     const interestingModes = blendModeInfos.filter(i => !i.skip);
     chosenBlendMode = p5.random(interestingModes);
-    //@ts-ignore
-    p5.blendMode(chosenBlendMode.mode);
+    p5.blendMode(chosenBlendMode.mode as ORIGINAL_P5.BLEND_MODE);
   }
 
   function fillWithRandomColour() {
@@ -139,7 +121,6 @@ export function blendModeDemoSketch2(p5: P5Instance) {
     p5.rect(0, 0, w, h, shapeOptions.roundedCorners ? cornerRadius : 0);
     p5.pop();
   }
-
 
   function drawBackingForText(font: any, str: string, x: number, y: number, size: number, vPad: number, w: number) {
     p5.blendMode(p5.BLEND);
@@ -191,10 +172,15 @@ export function blendModeDemoSketch2(p5: P5Instance) {
 
   function makeSideLabelText(shortcut: string, name: string) { return shortcut + " " + name; }
 
-  function getWorstSidelabelBounds(font: any, textSz: number) {
+  interface TextBounds {
+    w: number;
+    h: number;
+    x: number;
+    y: number;
+  }
+  function getWorstSidelabelBounds(font: ORIGINAL_P5.Font, textSz: number): TextBounds {
     const longestName = blendModeInfos.map(bmi => bmi.name).sort((a: string, b: string) => a < b ? 1 : -1)[0];
-    console.log('is this the longest name or is sort inverted? ', longestName)
-    return font.textBounds(makeSideLabelText("1", longestName), 0, 0, textSz);
+    return font.textBounds(makeSideLabelText("1", longestName), 0, 0, textSz) as TextBounds;
   }
 
   function drawSideLabelFor(modeInfo: BlendModeInfo, font: any, textSz: number, isCurrent: boolean) {
@@ -224,30 +210,6 @@ export function blendModeDemoSketch2(p5: P5Instance) {
     p5.text(str, textX, y);
 
     p5.pop();
-  }
-
-  p5.keyPressed = () => {
-    if (p5.key === 'b') {
-      shapeOptions.isGrayscale = !shapeOptions.isGrayscale;
-      wipe();
-    }
-    if (p5.key === 'r') {
-      shapeOptions.roundedCorners = !shapeOptions.roundedCorners;
-    }
-    if (p5.key === 'c') {
-      wipe();
-    }
-    if (p5.key === ' ') {
-      p5.noLoop();
-    }
-    const found = blendModeInfos.find(info => p5.key === info.shortcut);
-    if (found) {
-      previousBlendMode = chosenBlendMode;
-      console.log('storing previous blend mode: ', previousBlendMode)
-      chosenBlendMode = found;
-      //@ts-ignore
-      p5.blendMode(chosenBlendMode.mode);
-    }
   }
 
 }
