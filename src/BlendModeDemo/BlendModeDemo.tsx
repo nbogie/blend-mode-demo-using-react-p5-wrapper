@@ -8,17 +8,11 @@ import { BlendModeSelector } from './BlendModeSelector';
 
 
 export function BlendModeDemo() {
-  const [counter, setCounter] = useState(0);
   const [backgroundColour, setBackgroundColour] = useState('white');
   const [selectedBlendMode, setSelectedBlendMode] = useState<BlendModeInfo>(() => suggestedStartingBlendMode());
   const [isGrayscale, setIsGrayscale] = useState<boolean>(false);
 
   return <>
-
-    <button
-      className="big"
-      title={"this should have no effect on the p5js sketch"}
-      onClick={() => { setCounter(p => p + 10) }}>{counter}</button>
 
     <div><button onClick={() => setBackgroundColour('white')}>White Background</button>
       <button onClick={() => setBackgroundColour('black')}>Black Background</button>
@@ -37,7 +31,6 @@ export function BlendModeDemo() {
     <ReactP5Wrapper
       bgColour={backgroundColour}
       blendMode={selectedBlendMode}
-      counter={counter}
       isGrayscale={isGrayscale}
       sketch={blendModeDemoSketch}
     />
