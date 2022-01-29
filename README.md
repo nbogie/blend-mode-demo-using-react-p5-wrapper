@@ -2,6 +2,8 @@
 
 This is a React + p5.js app which demonstrates blend modes.
 
+Live at https://blendmodes-p5js.netlify.app/
+
 It uses [react-p5-wrapper](https://github.com/P5-wrapper/react) to integrate React and p5.js.
 It is written in TypeScript.
 
