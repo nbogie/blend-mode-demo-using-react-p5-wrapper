@@ -1,14 +1,24 @@
 import React from 'react';
 import './App.css';
 import BlendModeDemo from './BlendModeDemo/BlendModeDemo';
-// import SimpleDemo from './SimpleDemo';
+import {
+  ChakraProvider,
+  Box,
+  theme,
+} from "@chakra-ui/react"// import SimpleDemo from './SimpleDemo';
 
 export function App() {
   return <>
-    <BlendModeDemo />
+    <ChakraProvider theme={theme}>
+      <Box textAlign="center">
+        <BlendModeDemo />
+      </Box>
+    </ChakraProvider>
   </>
 
 }
+
+
 
 
 export default App;

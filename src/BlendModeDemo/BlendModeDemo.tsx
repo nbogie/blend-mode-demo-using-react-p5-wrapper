@@ -5,6 +5,7 @@ import { BlendModeInfo, suggestedStartingBlendMode } from './BlendModeInfo';
 import { BlendModeSelector } from './BlendModeSelector';
 import { Footer, Header } from './HeaderAndFooter';
 import { blendModeDemoSketch } from './BlendModeDemoSketch';
+import { Button, Container, Heading, HStack, Text, Tooltip, VStack } from '@chakra-ui/react'
 
 
 export function BlendModeDemo() {
@@ -12,30 +13,43 @@ export function BlendModeDemo() {
   const [selectedBlendMode, setSelectedBlendMode] = useState<BlendModeInfo>(() => suggestedStartingBlendMode());
   const [isGrayscale, setIsGrayscale] = useState<boolean>(false);
 
-  return <>
-    <Header />
-    <div><button onClick={() => setBackgroundColour('white')}>White Background</button>
-      <button onClick={() => setBackgroundColour('black')}>Black Background</button>
-      <button
-        onClick={() => setIsGrayscale(p => !p)}
-        title={"set whether added shapes use a colour or grayscale palette"}
-      >{isGrayscale ? "grayscale" : "colour"} shapes</button>
-    </div>
+  return <Container>
+    <VStack>
+      <Header />
+      <div>
+        <HStack>
+          <Button
+            variant={backgroundColour === 'white' ? 'solid' : 'outline'}
+            onClick={() => setBackgroundColour('white')}>White Background</Button>
+          <Button
+            variant={backgroundColour === 'black' ? 'solid' : 'outline'}
+            onClick={() => setBackgroundColour('black')}>Black Background</Button>
 
-    <BlendModeSelector
-      selectedBlendMode={selectedBlendMode}
-      setBlendMode={(bm) => setSelectedBlendMode(bm)} />
-    <h2>{selectedBlendMode.name}</h2>
-    <p>{selectedBlendMode.description}</p>
+          <Button
+            onClick={() => setIsGrayscale(p => !p)}
+          >
+            <Tooltip
+              label={`Shapes will be created from ${isGrayscale ? "grayscale" : "colour"} palette`}
+            >{(isGrayscale ? "grayscale" : "colour") + " shapes"}</Tooltip>
+          </Button>
+        </HStack>
+      </div>
 
-    <ReactP5Wrapper
-      bgColour={backgroundColour}
-      blendMode={selectedBlendMode}
-      isGrayscale={isGrayscale}
-      sketch={blendModeDemoSketch}
-    />
-    <Footer />
-  </ >
+      <BlendModeSelector
+        selectedBlendMode={selectedBlendMode}
+        setBlendMode={(bm) => setSelectedBlendMode(bm)} />
+      <Heading>{selectedBlendMode.name}</Heading>
+      <Text>{selectedBlendMode.description}</Text>
+
+      <ReactP5Wrapper
+        bgColour={backgroundColour}
+        blendMode={selectedBlendMode}
+        isGrayscale={isGrayscale}
+        sketch={blendModeDemoSketch}
+      />
+      <Footer />
+    </VStack>
+  </Container >
 
 }
 
