@@ -25,6 +25,9 @@ export function blendModeDemoSketch(p5: P5Instance) {
     // console.log('update with props: ', { props })
     if (props.bgColour) {
       bgColour = props.bgColour;
+      if (setupRan) { // we should only do this if the prop value changed.
+        // p5.background(bgColour);
+      }
     }
     if (props.blendMode) {
       if (setupRan) {
@@ -43,22 +46,21 @@ export function blendModeDemoSketch(p5: P5Instance) {
 
   p5.setup = () => {
     console.log('SETUP')
-    const canvas = p5.createCanvas(800, 500);
+    const canvas = p5.createCanvas(640, 480);
     canvas.mousePressed(myMousePressed);
 
     p5.background(bgColour);
 
     blendModeInfos = createBlendModeInfos();
     rotationDivision = p5.random([1, 1, 1, 1, 1, 3, 8, 8, 16, 16])
-    p5.rectMode(p5.CENTER);
     setupRan = true;
     updateChosenBlendMode(chosenBlendMode);
     // randomiseTheBlendMode();
-
   }
 
   p5.draw = () => {
-    drawShapes();
+    if (p5.frameCount % 8 === 1)
+      drawShapes();
   };
 
   function myMousePressed() {
@@ -96,9 +98,10 @@ export function blendModeDemoSketch(p5: P5Instance) {
   function wipe() {
     p5.push();
     p5.blendMode(p5.BLEND);
-    p5.background(50);
+    p5.background(bgColour);
     p5.pop();
   }
+
   function randomiseTheBlendMode() {
     const interestingModes = blendModeInfos.filter(i => !i.skip);
     updateChosenBlendMode(p5.random(interestingModes));
@@ -120,8 +123,8 @@ export function blendModeDemoSketch(p5: P5Instance) {
   function drawShapes() {
     let w = p5.random(50, 300);
     let h = p5.random(50, 300);
-    let xPos = p5.random(p5.windowWidth);
-    let yPos = p5.random(p5.windowHeight);
+    let xPos = p5.random(p5.width);
+    let yPos = p5.random(p5.height);
 
     shapeOptions.isGrayscale ? fillWithRandomGrayscale() : fillWithRandomColour();
     let cornerRadius = p5.random(10, 25);
@@ -130,6 +133,7 @@ export function blendModeDemoSketch(p5: P5Instance) {
     p5.translate(xPos, yPos);
 
     p5.rotate(p5.random([0, 1, 2, 3, 4, 5, 6, 7]) * p5.TWO_PI / rotationDivision);
+    p5.rectMode(p5.CENTER);
     p5.rect(0, 0, w, h, shapeOptions.roundedCorners ? cornerRadius : 0);
     p5.pop();
   }
