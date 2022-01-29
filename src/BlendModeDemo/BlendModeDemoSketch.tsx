@@ -58,7 +58,6 @@ export function blendModeDemoSketch(p5: P5Instance) {
   }
 
   p5.draw = () => {
-    p5.background(bgColour);
     drawShapes();
   };
 

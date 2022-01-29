@@ -11,4 +11,6 @@ There also exists a plain p5.js version of this Blend Mode Demo app, [source her
 
 ![screenshot](public/screenshot.png)
 
+---
+
 The React app is bootstrapped with Create React App. [Read the original Create React App docs](./README_CRA.md)
