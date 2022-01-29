@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
-import './BlendModeDemo.css';
 import { ReactP5Wrapper } from "react-p5-wrapper";
 
-import { blendModeDemoSketch } from './BlendModeDemoSketch';
 import { BlendModeInfo, suggestedStartingBlendMode } from './BlendModeInfo';
 import { BlendModeSelector } from './BlendModeSelector';
+import { Footer, Header } from './HeaderAndFooter';
+import { blendModeDemoSketch } from './BlendModeDemoSketch';
 
 
 export function BlendModeDemo() {
@@ -13,7 +13,7 @@ export function BlendModeDemo() {
   const [isGrayscale, setIsGrayscale] = useState<boolean>(false);
 
   return <>
-
+    <Header />
     <div><button onClick={() => setBackgroundColour('white')}>White Background</button>
       <button onClick={() => setBackgroundColour('black')}>Black Background</button>
       <button
@@ -34,7 +34,9 @@ export function BlendModeDemo() {
       isGrayscale={isGrayscale}
       sketch={blendModeDemoSketch}
     />
+    <Footer />
   </ >
 
 }
+
 export default BlendModeDemo;
